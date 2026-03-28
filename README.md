@@ -1,2 +1,2 @@
 # Aux-Pivot
-A tool to create aux pivot in maya like in motion builder.
+A tool to create auxiliary pivot in maya like in motion builder.
