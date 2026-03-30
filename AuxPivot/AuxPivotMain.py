@@ -141,7 +141,6 @@ class AuxPivotMain(QtWidgets.QMainWindow):
         time = (start_timeline, end_timeline) if start == end else (start, end + 1)
 
         for (loc, ctrl) in loc_ctrl:
-            bake_loc = cmds.spaceLocator(name="bake_" + ctrl)[0]
 
             # # previous method:
             # for t in range(int(time[0]), int(time[-1])):
@@ -151,6 +150,15 @@ class AuxPivotMain(QtWidgets.QMainWindow):
             #     cmds.setKeyframe(bake_loc)
 
             # make bake_loc follows the initial pivot of ctrl
+
+            if any(*cmds.getAttr(f"{ctrl}.rotatePivot", time=time[-1])):
+                result = QtWidgets.QMessageBox.question(None, "Warning",
+                                                        "The result for {ctrl} is unpredictable since the rotate pivot is not zeroed out on the end frame you specified."
+                                                        "\nDo you still want to continue ?")
+                if not result == QtWidgets.QMessageBox.StandardButton.Yes:
+                    return
+
+            bake_loc = cmds.spaceLocator(name="bake_" + ctrl)[0]
             mult_node = cmds.createNode("multMatrix")
             cmds.connectAttr(f"{ctrl}.worldMatrix[0]", f"{mult_node}.matrixIn[0]")
             cmds.connectAttr(f"{loc}.matrix", f"{mult_node}.matrixIn[1]")
